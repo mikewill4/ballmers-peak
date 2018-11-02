@@ -6,7 +6,7 @@ DATABASE = 'Teams.db'
 
 @app.route('/registerteam')
 def new_team():
-   return render_template('new_team.html')
+   return render_template('register.html')
 
 @app.route('/questions')
 def questions():
@@ -16,6 +16,16 @@ def questions():
 def main():
     cur = get_db().cursor()
     return render_template("home.html")
+
+@app.route("/ctf1")
+def ctf1():
+    cur = get_db().cursor()
+    return render_template("ctf1.html")
+
+@app.route("/ctf2")
+def ctf2():
+    cur = get_db().cursor()
+    return render_template("ctf2.html")
 
 @app.route('/leaderboard')
 def leaderboard():
