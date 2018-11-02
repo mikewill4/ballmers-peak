@@ -17,4 +17,4 @@ def query_db(query, database_name):
     except:
        con.rollback()
        print("Error executing query: " + query)
-       return new list()
+       return []
