@@ -4,10 +4,6 @@ app = Flask(__name__)
 
 DATABASE = 'Teams.db'
 
-@app.route('/about')
-def about():
-   return render_template('about.html')
-
 @app.route('/registerteam')
 def new_team():
    return render_template('new_team.html')
