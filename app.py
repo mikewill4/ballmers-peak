@@ -27,6 +27,34 @@ def ctf2():
     cur = get_db().cursor()
     return render_template("ctf2.html")
 
+@app.route("/algo1")
+def algo1():
+  return render_template("StockPrices.html")
+
+@app.route("/algo2")
+def algo2():
+  return render_template("Skiing.html")
+
+@app.route("/algo3")
+def algo3():
+  return render_template("KidsLiningUp.html")
+
+@app.route("/algo4")
+def algo4():
+  return render_template("RoundingFloats.html")
+
+@app.route("/algo5")
+def algo5():
+  return render_template("6dMahjong.html")
+
+@app.route("/algo6")
+def algo6():
+  return render_template("AssigningToBrainCells.html")
+
+@app.route("/algo7")
+def algo7():
+  return render_template("LogOrders.html")
+
 @app.route('/leaderboard')
 def leaderboard():
     try:
