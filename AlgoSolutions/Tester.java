@@ -10,6 +10,10 @@ public class Tester {
 
     // Runtime should be O(n  ^ 2)
     public static boolean canIWinCorrect(int[] board) {
+        if (board == null || board.length == 0) {
+            return false;
+        }
+
         return helper(board, 0, board.length-1, new Integer[board.length][board.length])>=0;
     }
 
@@ -71,8 +75,11 @@ public class Tester {
                 int theirResult = ski(test);
                 if (result == theirResult) {
                     numCorrect++;
+                } else {
+                    printArray(test);
                 }
             } catch (Exception e) {
+                printArray(test);
                 continue;
             }
         }
@@ -90,8 +97,11 @@ public class Tester {
                 int[] theirResult = stockIncreases(test);
                 if (compareTwoArrays(result, theirResult)) {
                     numCorrect++;
+                } else {
+                    printArray(test);
                 }
             } catch (Exception e) {
+                printArray(test);
                 continue;
             }
         }
@@ -110,8 +120,11 @@ public class Tester {
                 boolean theirResult = canIWin(test);
                 if (result == theirResult) {
                     numCorrect++;
+                } else {
+                    printArray(test);
                 }
             } catch (Exception e) {
+                printArray(test);
                 continue;
             }
         }
@@ -121,20 +134,28 @@ public class Tester {
 
     private static int[] generateRandomPositiveIntArray() {
         Random rand = new Random();
-        int length = rand.nextInt(1000);
+        int length = rand.nextInt(50) + 1;
         int[] test = new int[length];
 
         for (int j = 0; j < length; j++) {
-            test[j] = rand.nextInt(1000);
+            test[j] = rand.nextInt(100);
         }
 
         return test;
     }
 
     private static void printArray(int[] arr) {
-        for (int i : arr) {
-            System.out.print(i + ",");
+        System.out.print("{");
+        for (int i = 0; i < arr.length; i++) {
+            System.out.print(arr[i]);
+
+            if (i < arr.length - 1) {
+                System.out.print(", ");
+            }
         }
+
+        System.out.print("}");
+        System.out.println();
     }
 
     private static boolean compareTwoArrays(int[] first, int[] second) {
