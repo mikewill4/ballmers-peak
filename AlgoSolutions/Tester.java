@@ -1,11 +1,13 @@
 import java.util.*;
 import java.util.Random;
+import java.lang.*;
 
 public class Tester {
     public static void main(String[] args) {
-        System.out.println(testStockIncreases());
-        System.out.println(test6DMahjong());
-        System.out.println(testSki());
+        // System.out.println(testStockIncreases());
+        // System.out.println(test6DMahjong());
+        // System.out.println(testSki());
+        // System.out.println(testRound());
     }
 
     // Runtime should be O(n  ^ 2)
@@ -63,6 +65,78 @@ public class Tester {
         }
 
         return max;
+    }
+
+    // Runtime should be O(n)
+    private static int[] roundCorrect(double[] input, int target) {
+        int flooredSum = 0;
+        PriorityQueue<double[]> maxHeap = new PriorityQueue<>((a,b) -> Double.compare(b[0], a[0]));
+        int[] results = new int[input.length];
+
+        for (int i = 0; i < input.length; i++) {
+            int floored = (int) Math.floor(input[i]);
+            results[i] = floored;
+            flooredSum += floored;
+            double[] element = new double[] {input[i] - floored, i};
+            maxHeap.offer(element);
+        }
+
+        int difference = target - flooredSum;
+
+        for (int i = 0; i < difference && !maxHeap.isEmpty(); i++) {
+            double[] top = maxHeap.poll();
+            int index = (int) top[1];
+
+            results[index] = (int) Math.ceil(input[index]);
+        }
+
+        return results;
+    }
+
+    // Runtime should be roughly O(n ^ 2)
+    private static boolean canIFulfillOrderCorrect(int[] inventory, int[] order) {
+        List<Integer> inv = new ArrayList<>();
+        for (int i = 0; i < inventory.length; i++) {
+            inv.add(inventory[i]);
+        }
+
+        List<Integer> orders = new ArrayList<>();
+        for (int i = 0; i < order.length; i++) {
+            orders.add(order[i]);
+        }
+
+        Collections.sort(orders);
+        return fulfillOrderHelper(inv, orders);
+    }
+
+    private static boolean fulfillOrderHelper(List<Integer> inv, List<Integer> order) {
+        if (order.size() == 0) {
+            return true;
+        }
+
+        if (inv.size() == 0) {
+            return false;
+        }
+
+        int maxOrder = order.get(order.size() - 1);
+        order.remove(order.size() - 1);
+        
+        for (int i = 0; i < inv.size(); i++) {
+            if (inv.get(i) >= maxOrder) {
+                List<Integer> next = new ArrayList<>(inv);
+                next.remove(i);
+
+                if (fulfillOrderHelper(next, new ArrayList<>(order))) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static int testLogOrder() {
+        return -1;
     }
 
     private static int testSki() {
@@ -190,5 +264,9 @@ public class Tester {
 
     private static int ski(int[]mountains) {
         return -1;
+    }
+
+    private int[] round(double[] input, int target) {
+        return null;
     }
 }
