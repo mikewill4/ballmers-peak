@@ -1,0 +1,27 @@
+// Create the Games table
+CREATE TABLE Game (
+    GameID INTEGER PRIMARY KEY AUTOINCREMENT
+);
+
+// Create the Teams table
+CREATE TABLE Teams (
+    TeamID INTEGER,
+    TeamName varchar(50),
+    GameID INTEGER,
+    FOREIGN KEY(GameID) REFERENCES Game(GameID)
+);
+
+// Create the Questions table
+CREATE TABLE Questions (
+    QuestionID INTEGER PRIMARY KEY,
+    Points INTEGER, 
+    IsAlgoQuestion INTEGER
+);
+
+// Create the Submission table
+CREATE TABLE Submissions (
+    SubmissionID INTEGER PRIMARY KEY AUTOINCREMENT,
+    TeamID INTEGER, 
+    Score INTEGER,
+    FOREIGN KEY(TeamID) REFERENCES Game(GameID)
+);
