@@ -3,33 +3,38 @@ from DatabaseUtility import query_db
 import sqlite3 as sql
 app = Flask(__name__)
 
-DATABASE = 'Teams.db'
+DATABASE = 'BallmersPeak.db'
 
 @app.route('/registerteam')
 def new_team():
    return render_template('register.html')
 
+@app.route('/viewleaderboard')
+def view_leaderboard():
+  return render_template('view_leaderboard.html')
+
 @app.route('/leaderboard', methods = ['POST'])
 def leaderboard():
   msg = ''
   if request.method == 'POST':
-    try:
-      gameID = int(request.form['id'])
+    if True:
+      gameID = request.form['id']
       with sql.connect("BallmersPeak.db") as con:
           cur = con.cursor()
-          result = cur.execute("SELECT TeamName, Score FROM (SELECT TeamID, SUM(Score) as Score FROM (SELECT TeamID, questionID, MAX(Score) as Score FROM Submissions GROUP BY teamID, questionID HAVING GameID = (?))) INNER JOIN Teams USING (teamID);", (gameID)) 
-          msg = '\n Team Name | Score'
+          result = cur.execute("SELECT TeamName, Score FROM (SELECT TeamID, SUM(Score) as Score FROM (SELECT TeamID, questionID, MAX(Score) as Score FROM Submissions GROUP BY teamID, questionID HAVING GameID = (?))) INNER JOIN Teams USING (teamID) ORDER BY Score DESC;", (gameID)) 
+          msg = '<br><b>  Team Name | Score </b><br>'
           
           for pair in result:
-            msg += pair[0] + ' | ' + str(pair[1]) + '\n' 
-
-      except:
-        con.rollback()
-        msg = "Failed to retrieve leaderboard"
+            msg += pair[0] + ' | ' + str(pair[1]) + '<br>' 
       
-      finally:
-        con.close()
-        return render_template("result.html",msg = msg)
+      print(msg)
+    # except:
+    #   con.rollback()
+    #   msg = "Failed to retrieve leaderboard"
+      
+    # finally:
+      con.close()
+      return render_template("result.html",msg = msg)
 
 @app.route('/teamregistered', methods = ['POST'])
 def teamregistered():
@@ -146,19 +151,6 @@ def algo6():
 @app.route("/algo7")
 def algo7():
   return render_template("LogOrders.html")
-
-@app.route('/leaderboard')
-def leaderboard():
-    try:
-         with sql.connect("Teams.db") as con:
-            cur = con.cursor()
-            result = cur.execute("SELECT NAME, SCORE FROM REGISTERED ORDER BY SCORE DESC")
-
-            return render_template('leaderboard.html', data = result.fetchall())
-    except:
-       con.rollback()
-       return "Error fetching leaderboard. fuck bruh"
-
 
 def get_db():
     db = getattr(g, '_database', None)

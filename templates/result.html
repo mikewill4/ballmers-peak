@@ -2,7 +2,10 @@
 <html>
    <body>
    
-      Result : {{ msg }}
+      Result : 
+      {% autoescape false %}
+        {{ msg }}
+      {% endautoescape %}
       <h2><a href = "\">Return to home page</a></h2>
       
    </body>

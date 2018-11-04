@@ -24,8 +24,8 @@ CREATE TABLE Submissions (
     SubmissionID INTEGER PRIMARY KEY AUTOINCREMENT,
     TeamID INTEGER, 
     Score INTEGER,
-    QuestionID,
-    GameID,
+    QuestionID INTEGER,
+    GameID INTEGER,
     FOREIGN KEY(TeamID) REFERENCES Team(TeamID),
     FOREIGN KEY(QuestionID) REFERENCES Questions(QuestionID),
     FOREIGN KEY(GameID) REFERENCES Game(GameID)
