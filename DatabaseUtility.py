@@ -1,4 +1,3 @@
-
 import sqlite3 as sql
 
 def get_db(database_name):
@@ -12,9 +11,9 @@ def query_db(query, database_name):
          with sql.connect(database_name) as con:
             cur = con.cursor()
             result = cur.execute(query)
-
             return result.fetchall()
     except:
        con.rollback()
        print("Error executing query: " + query)
        return []
+

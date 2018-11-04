@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, g
+from DatabaseUtility import query_db
 import sqlite3 as sql
 app = Flask(__name__)
 
@@ -7,6 +8,50 @@ DATABASE = 'Teams.db'
 @app.route('/registerteam')
 def new_team():
    return render_template('register.html')
+
+@app.route('/teamregistered', methods = ['POST'])
+def teamregistered():
+  msg = ''
+  if request.method == 'POST':
+      try:
+        team_name = request.form['name']
+        gameID = request.form['id']
+        new_game_id = int(gameID)
+
+        ## Need to create a new gameID
+        if int(gameID) == -1:
+          game_id_query_result = query_db('SELECT MAX(GameID) from Game;', 'BallmersPeak.db')
+          if (len(game_id_query_result) == 0 or game_id_query_result[0][0] is None):
+            new_game_id = 0
+          else:
+            new_game_id = game_id_query_result[0][0] + 1
+
+          with sql.connect("BallmersPeak.db") as con:
+            cur = con.cursor()
+            result = cur.execute("INSERT INTO Game (GameID) VALUES (NULL)") 
+            con.commit()
+
+        team_id_query_result = query_db('SELECT MAX(TeamID) from Teams;', 'BallmersPeak.db')
+        new_team_id = -1
+        if (len(team_id_query_result) == 0 or team_id_query_result[0][0] is None):
+          new_team_id = 0
+        else:
+          new_team_id = team_id_query_result[0][0] + 1
+        
+        with sql.connect("BallmersPeak.db") as con:
+          cur = con.cursor()
+          result = cur.execute("INSERT INTO Teams (TeamID, TeamName, GameID) VALUES (?, ?, ?)", (new_team_id, team_name, new_game_id)) 
+          con.commit()
+
+        msg = 'Thank you, ' + str(team_name) + ', your game id is: ' + str(new_game_id) + ', and your team id is: ' + str(new_team_id) + '.'
+      except:
+        con.rollback()
+        msg = "Failed to add team"
+      
+      finally:
+        con.close()
+        return render_template("result.html",msg = msg)
+
 
 @app.route('/questions')
 def questions():
