@@ -27,6 +27,31 @@ def ctf2():
     cur = get_db().cursor()
     return render_template("ctf2.html")
 
+@app.route("/ctf3")
+def ctf3():
+    cur = get_db().cursor()
+    return render_template("ctf3.html")
+
+@app.route("/ctf4")
+def ctf4():
+    cur = get_db().cursor()
+    return render_template("ctf4.html")
+
+@app.route("/ctf5")
+def ctf5():
+    cur = get_db().cursor()
+    return render_template("ctf5.html")
+
+@app.route("/ctf6")
+def ctf6():
+    cur = get_db().cursor()
+    return render_template("ctf6.html")
+
+@app.route("/ctf7")
+def ctf7():
+    cur = get_db().cursor()
+    return render_template("ctf7.html")
+
 @app.route("/algo1")
 def algo1():
   return render_template("StockPrices.html")
