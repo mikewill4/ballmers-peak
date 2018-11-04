@@ -17,7 +17,7 @@ def view_leaderboard():
 def leaderboard():
   msg = ''
   if request.method == 'POST':
-    if True:
+    try:
       gameID = request.form['id']
       with sql.connect("BallmersPeak.db") as con:
           cur = con.cursor()
@@ -27,14 +27,40 @@ def leaderboard():
           for pair in result:
             msg += pair[0] + ' | ' + str(pair[1]) + '<br>' 
       
-      print(msg)
-    # except:
-    #   con.rollback()
-    #   msg = "Failed to retrieve leaderboard"
+    except:
+      con.rollback()
+      msg = "Failed to retrieve leaderboard"
       
-    # finally:
+    finally:
       con.close()
       return render_template("result.html",msg = msg)
+
+@app.route('/viewsubmissions')
+def viewsubmisions():
+  return render_template("view_submissions.html")
+
+@app.route('/submissions', methods = ['POST'])
+def submissions():
+  msg = ''
+  if request.method == 'POST':
+    try:
+      team_id = request.form['id']
+      with sql.connect("BallmersPeak.db") as con:
+          cur = con.cursor()
+          result = cur.execute("SELECT SubmissionID, QuestionTitle, Score, Points FROM (SELECT * FROM Submissions INNER JOIN Questions USING (QuestionID) WHERE TeamID = (?)) ORDER BY QuestionTitle;", (team_id)) 
+          msg = '<br><b>  SubmissionID | Question Title | Your Score | Max Points </b><br>'
+          
+          for pair in result:
+            msg += str(pair[0]) + ' | ' + str(pair[1]) + ' | ' + str(pair[2]) + ' | ' + str(pair[3]) + '<br>' 
+      
+    except:
+      con.rollback()
+      msg = "Failed to retrieve submissions"
+      
+    finally:
+      con.close()
+      return render_template("result.html",msg = msg)
+
 
 @app.route('/teamregistered', methods = ['POST'])
 def teamregistered():
