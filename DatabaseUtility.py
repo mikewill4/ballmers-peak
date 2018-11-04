@@ -17,3 +17,14 @@ def query_db(query, database_name):
        print("Error executing query: " + query)
        return []
 
+def insert_submission(teamID, score, question_id, gameID, database_name):
+    try:
+        with sql.connect(database_name) as con:
+            cur = con.cursor()
+            result = cur.execute("INSERT INTO Submissions (TeamID, Score, QuestionID, GameID) VALUES (?, ?, ?, ?)", (teamID, score, question_id, gameID)) 
+            con.commit()
+    except:
+        con.rollback()
+        print("Error executing query")
+
+insert_submission(0, 0, 100, 0, 'BallmersPeak.db')

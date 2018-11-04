@@ -15,7 +15,8 @@ CREATE TABLE Teams (
 CREATE TABLE Questions (
     QuestionID INTEGER PRIMARY KEY,
     Points INTEGER, 
-    IsAlgoQuestion INTEGER
+    IsAlgoQuestion INTEGER, 
+    QuestionTitle VARCHAR(100)
 );
 
 // Create the Submission table
@@ -23,5 +24,9 @@ CREATE TABLE Submissions (
     SubmissionID INTEGER PRIMARY KEY AUTOINCREMENT,
     TeamID INTEGER, 
     Score INTEGER,
-    FOREIGN KEY(TeamID) REFERENCES Game(GameID)
+    QuestionID,
+    GameID,
+    FOREIGN KEY(TeamID) REFERENCES Team(TeamID),
+    FOREIGN KEY(QuestionID) REFERENCES Questions(QuestionID),
+    FOREIGN KEY(GameID) REFERENCES Game(GameID)
 );
