@@ -1,0 +1,24 @@
+<html>
+<head>
+<title>Register a Team</title>
+</head>
+<body>
+    <html>
+        <body>
+           <form action = "{{ url_for('teamregistered') }}" method = "POST">
+              <h3>Team Information</h3>
+              Team Name<br>
+              <input type = "text" name = "name" /></br>
+                  
+              Game ID (Enter -1 if a game has not been created yet)<br>
+              <input type = "text" name = "id" /><br>
+              <input type = "submit" value = "submit" /><br>
+     
+              <p>By pressing "submit", I take sole responsibility for my actions during this event.</p>
+           </form>
+           
+        </body>
+     </html>
+<p>&#169; DMM, 2018</p>
+</body>
+</html>
