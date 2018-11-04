@@ -3,11 +3,38 @@ from DatabaseUtility import query_db
 import sqlite3 as sql
 app = Flask(__name__)
 
-DATABASE = 'Teams.db'
+DATABASE = 'BallmersPeak.db'
 
 @app.route('/registerteam')
 def new_team():
    return render_template('register.html')
+
+@app.route('/viewleaderboard')
+def view_leaderboard():
+  return render_template('view_leaderboard.html')
+
+@app.route('/leaderboard', methods = ['POST'])
+def leaderboard():
+  msg = ''
+  if request.method == 'POST':
+    if True:
+      gameID = request.form['id']
+      with sql.connect("BallmersPeak.db") as con:
+          cur = con.cursor()
+          result = cur.execute("SELECT TeamName, Score FROM (SELECT TeamID, SUM(Score) as Score FROM (SELECT TeamID, questionID, MAX(Score) as Score FROM Submissions GROUP BY teamID, questionID HAVING GameID = (?))) INNER JOIN Teams USING (teamID) ORDER BY Score DESC;", (gameID)) 
+          msg = '<br><b>  Team Name | Score </b><br>'
+          
+          for pair in result:
+            msg += pair[0] + ' | ' + str(pair[1]) + '<br>' 
+      
+      print(msg)
+    # except:
+    #   con.rollback()
+    #   msg = "Failed to retrieve leaderboard"
+      
+    # finally:
+      con.close()
+      return render_template("result.html",msg = msg)
 
 @app.route('/teamregistered', methods = ['POST'])
 def teamregistered():
@@ -15,11 +42,11 @@ def teamregistered():
   if request.method == 'POST':
       try:
         team_name = request.form['name']
-        gameID = request.form['id']
-        new_game_id = int(gameID)
+        gameID = int(request.form['id'])
+        new_game_id = gameID
 
         ## Need to create a new gameID
-        if int(gameID) == -1:
+        if gameID == -1:
           game_id_query_result = query_db('SELECT MAX(GameID) from Game;', 'BallmersPeak.db')
           if (len(game_id_query_result) == 0 or game_id_query_result[0][0] is None):
             new_game_id = 0
@@ -124,19 +151,6 @@ def algo6():
 @app.route("/algo7")
 def algo7():
   return render_template("LogOrders.html")
-
-@app.route('/leaderboard')
-def leaderboard():
-    try:
-         with sql.connect("Teams.db") as con:
-            cur = con.cursor()
-            result = cur.execute("SELECT NAME, SCORE FROM REGISTERED ORDER BY SCORE DESC")
-
-            return render_template('leaderboard.html', data = result.fetchall())
-    except:
-       con.rollback()
-       return "Error fetching leaderboard. fuck bruh"
-
 
 def get_db():
     db = getattr(g, '_database', None)
