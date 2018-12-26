@@ -1,9 +1,36 @@
 from flask import Flask, render_template, request, g
-from DatabaseUtility import query_db
+from DatabaseUtility import query_db, insert_submission
 import sqlite3 as sql
 app = Flask(__name__)
 
 DATABASE = 'BallmersPeak.db'
+
+@app.route('/enterscore')
+def enter_score():
+  return render_template('enter_scores.html')
+
+@app.route('/score_entered', methods=['POST'])
+def score_entered():
+  msg = ''
+  if request.method == 'POST':
+    try:
+      gameID = request.form['gameid']
+      score = request.form['score']
+      qid = request.form['qid']
+      teamid = request.form['teamid']
+      code = request.form['code']
+
+      if code == 'miketim3':
+        insert_submission(teamid, score, qid, gameID, 'BallmersPeak.db')
+        msg = 'Score entered!'
+      else:
+        msg = 'Access code invalid'
+      
+    except:
+      msg = "Failed to retrieve leaderboard"
+      
+    finally:
+      return render_template("result.html",msg = msg)
 
 @app.route('/registerteam')
 def new_team():
@@ -17,7 +44,7 @@ def view_leaderboard():
 def leaderboard():
   msg = ''
   if request.method == 'POST':
-    if True:
+    try:
       gameID = request.form['id']
       with sql.connect("BallmersPeak.db") as con:
           cur = con.cursor()
@@ -27,14 +54,40 @@ def leaderboard():
           for pair in result:
             msg += pair[0] + ' | ' + str(pair[1]) + '<br>' 
       
-      print(msg)
-    # except:
-    #   con.rollback()
-    #   msg = "Failed to retrieve leaderboard"
+    except:
+      con.rollback()
+      msg = "Failed to retrieve leaderboard"
       
-    # finally:
+    finally:
       con.close()
       return render_template("result.html",msg = msg)
+
+@app.route('/viewsubmissions')
+def viewsubmisions():
+  return render_template("view_submissions.html")
+
+@app.route('/submissions', methods = ['POST'])
+def submissions():
+  msg = ''
+  if request.method == 'POST':
+    try:
+      team_id = request.form['id']
+      with sql.connect("BallmersPeak.db") as con:
+          cur = con.cursor()
+          result = cur.execute("SELECT SubmissionID, QuestionTitle, Score, Points FROM (SELECT * FROM Submissions INNER JOIN Questions USING (QuestionID) WHERE TeamID = (?)) ORDER BY QuestionTitle, SubmissionID DESC;", (team_id)) 
+          msg = '<br><b>  SubmissionID | Question Title | Your Score | Max Points </b><br>'
+          
+          for pair in result:
+            msg += str(pair[0]) + ' | ' + str(pair[1]) + ' | ' + str(pair[2]) + ' | ' + str(pair[3]) + '<br>' 
+      
+    except:
+      con.rollback()
+      msg = "Failed to retrieve submissions"
+      
+    finally:
+      con.close()
+      return render_template("result.html",msg = msg)
+
 
 @app.route('/teamregistered', methods = ['POST'])
 def teamregistered():

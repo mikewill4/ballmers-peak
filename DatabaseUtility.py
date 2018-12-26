@@ -27,4 +27,4 @@ def insert_submission(teamID, score, question_id, gameID, database_name):
         con.rollback()
         print("Error executing query")
 
-# insert_submission(0, 1, 200, 0, 'BallmersPeak.db')
+# insert_submission(0, 10, 2, 0, 'BallmersPeak.db')

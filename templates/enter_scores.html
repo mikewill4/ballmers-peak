@@ -1,0 +1,31 @@
+<html>
+<head>
+<title>Enter Scores</title>
+</head>
+<body>
+    <html>
+        <body>
+           <form action = "{{ url_for('score_entered') }}" method = "POST">
+              Team ID <br>
+              <input type = "text" name = "teamid" /><br>
+
+              Question ID (1-7 for algo questions, 8- 14 for ctf questions) <br>
+              <input type = "text" name = "qid" /><br>
+
+              Game ID <br>
+              <input type = "text" name = "gameid" /><br>
+
+              Score <br>
+              <input type = "text" name = "score" /><br>
+
+
+              Access Code <br>
+              <input type = "text" name = "code" /><br>
+              <input type = "submit" value = "submit" /><br>
+     
+           </form>
+        </body>
+     </html>
+<p>&#169; DMM, 2018</p>
+</body>
+</html>

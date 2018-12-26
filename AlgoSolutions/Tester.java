@@ -8,6 +8,46 @@ public class Tester {
         // System.out.println(test6DMahjong());
         // System.out.println(testSki());
         // System.out.println(testRound());
+        // System.out.println(testBrainCells());
+        // System.out.println(testLogOrder());
+        // System.out.println(testKidsLiningUp());
+    }
+
+    // Should be O(n log n)
+    public static int getMinNumberLinesCorrect(int[] heights) {
+        return lengthOfLIS(heights);
+    }
+
+    public static int lengthOfLIS(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        
+        int[] tails = new int[nums.length];
+        int longest = 0;
+        
+        for (int num : nums) {
+            int left = 0;
+            int right = longest;
+            
+            while (left < right) {
+                int mid = (left + right) / 2;
+                
+                if (tails[mid] < num) {
+                    left = mid + 1;
+                } else {
+                    right = mid - 1;
+                }
+            }
+            
+            if (left == longest || nums[left] == num) {
+                longest++;
+            }
+            
+            tails[left] = num;
+        }
+        
+        return longest;
     }
 
     // Runtime should be O(n  ^ 2)
@@ -136,7 +176,23 @@ public class Tester {
     }
 
     private static int testLogOrder() {
-        return -1;
+        int numCorrect = 0;
+        for (int i = 0; i < 100; i++) {
+            int[] inventory = generateRandomPositiveIntArray();
+            int[] order = generateRandomPositiveIntArray();
+            boolean result = canIFulfillOrderCorrect(inventory, order);
+            
+            try {
+                boolean theirResult = canIFulfillOrder(inventory, order);
+                if (result == theirResult) {
+                    numCorrect++;
+                } 
+            } catch (Exception e) {
+                continue;
+            }
+        }
+
+        return (int) ((1.0 * numCorrect) / 100 * 150);
     }
 
     private static int testSki() {
@@ -158,7 +214,7 @@ public class Tester {
             }
         }
 
-        return numCorrect;
+        return (int) ((1.0 * numCorrect) / 100 * 50);
     }
 
     private static int testStockIncreases() {
@@ -180,7 +236,7 @@ public class Tester {
             }
         }
 
-        return numCorrect;
+        return (int) ((1.0 * numCorrect) / 100 * 50);
     }
 
     private static int test6DMahjong() {
@@ -203,7 +259,127 @@ public class Tester {
             }
         }
 
-        return numCorrect;
+        return (int) ((1.0 * numCorrect) / 100 * 100);
+    }
+
+    private static int testKidsLiningUp() {
+        int numCorrect = 0;
+
+        for (int i = 0; i < 100; i++) {
+            int[] test = generateRandomPositiveIntArray();
+            int result = getMinNumberLinesCorrect(test);
+
+            try {
+                int theirResult = getMinNumberLines(test);
+                if (result == theirResult) {
+                    numCorrect++;
+                } else {
+                    printArray(test);
+                }
+            } catch (Exception e) {
+                printArray(test);
+                continue;
+            }
+        }
+
+        return (int) ((1.0 * numCorrect) / 100 * 100);
+    }
+
+    private static int testRound() {
+        int numCorrect = 0;
+
+        for (int i = 0; i < 100; i++) {
+            int[] test = generateRandomPositiveIntArray();
+            double[] converted = new double[test.length];
+            int sum = 0;
+
+            for (int j = 0; j < test.length; j++) {
+                sum += test[j];
+                converted[j] = test[j] + Math.random();
+            }
+            
+            int[] result = roundCorrect(converted, sum);
+
+            try {
+                int theirSum = 0;
+                double theirRoundOff = 0;
+                double ourRoundOff = 0;
+                int[] theirResult = round(converted, sum);
+
+                if (theirResult == null || theirResult.length != result.length) {
+                    continue;
+                }
+
+                for (int j = 0; j < theirResult.length; j++) {
+                    theirSum += theirResult[j];
+                    theirRoundOff += Math.abs(theirResult[j] - converted[j]);
+                    ourRoundOff += Math.abs(result[j] - converted[j]);
+                }
+
+                if (theirSum == sum && Double.compare(theirRoundOff, ourRoundOff) == 0) {
+                    numCorrect++;
+                }
+            } catch (Exception e) {
+                printArray(test);
+                continue;
+            }
+        }
+
+        return (int) ((1.0 * numCorrect) / 100 * 100);
+    }
+
+    private static int testBrainCells() {
+        int numCorrect = 0;
+
+        String[] in1 = new String[] {"Test", "Tim", "Tim"};
+        String[] in2 = new String[] {"A", "B", "C", "C", "B", "E", "E"};
+        String[] in3 = new String[] {"A", "B", "A", "A", "A", "A"};
+        String[] in4 = new String[] {"A"};
+        String[] in5 = new String[] {"A", "A", "B", "C", "C", "D", "A", "C,", "E", "C"};
+
+        try {
+            if (maxAssignments(in1, 1) == 2) {
+                numCorrect++;
+            }    
+        } catch (Exception e){}
+
+        try {
+            if (maxAssignments(in2, 2) == 4) {
+                numCorrect++;
+            }
+        } catch (Exception e) {}
+
+        try {
+            if (maxAssignments(in1, 2) == 3) {
+                numCorrect++;
+            }
+        } catch (Exception e) {}
+
+        try {
+            if (maxAssignments(in3, 2) == 6) {
+                numCorrect++;
+            }
+        } catch (Exception e) {}
+
+        try {
+            if (maxAssignments(in3, 1) == 4) {
+                numCorrect++;
+            }
+        } catch (Exception e) {}
+
+        try {
+            if (maxAssignments(in4, 5) == 1) {
+                numCorrect++;
+            }
+        } catch (Exception e) {}
+
+        try {
+            if (maxAssignments(in5, 3) == 5) {
+                numCorrect++;
+            }
+        } catch (Exception e) {}
+
+        return (int) ((1.0 * numCorrect) / 7 * 150);
     }
 
     private static int[] generateRandomPositiveIntArray() {
@@ -266,7 +442,19 @@ public class Tester {
         return -1;
     }
 
-    private int[] round(double[] input, int target) {
+    private static int[] round(double[] input, int target) {
         return null;
+    }
+
+    private static boolean canIFulfillOrder(int[] inventory, int[] order) {
+        return false;
+    }
+
+    private static int maxAssignments(String[] words, int numBrainCells) {
+        return -1;
+    }
+
+    private static int getMinNumberLines(int[] children) {
+        return -1;
     }
 }
